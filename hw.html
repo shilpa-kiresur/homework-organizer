@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Homework Organizer</title>
+
+  <!-- ✅ CSS inside this <style> tag -->
+  <style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    background: linear-gradient(to right, #26F596, #0499F2);
+  }
+
+  .sidebar-left {
+    width: 100px;
+    background: #ffffff22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+  }
+
+  .icon {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 20px 0;
+    cursor: pointer;
+  }
+
+  .icon span {
+    display: block;
+    font-size: 0.8em;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+  }
+
+  .butterfly {
+    font-size: 2em;
+    color: #388e3c;
+  }
+
+  h1 {
+    color: #4a148c;
+  }
+
+  .date-nav {
+    font-size: 1.5em;
+    margin: 10px 0;
+  }
+
+  .date-nav button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+
+  .homework-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .nelson,
+  .dirtyfog {
+    aspect-ratio: 1 / 1;
+    width: 30%;
+    max-width: 200px;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0;
+    padding: 10px;
+    color: white;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+  }
+
+  .nelson {
+    background: linear-gradient(to right, #f2709c, #ff9472);
+  }
+
+  .dirtyfog {
+    background: linear-gradient(to right, #B993D6, #8CA6DB);
+  }
+
+  .nelson:hover,
+  .dirtyfog:hover {
+    transform: scale(1.05);
+  }
+
+  .delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .popup {
+    display: none;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+
+  .calendar-nav {
+    text-align: center;
+    margin-top: 40px;
+    display: none;
+  }
+
+  .calendar-grid {
+    display: none;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .calendar-grid div {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 5px;
+  }
+
+.weekday-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  background: #ffffff33;
+  color: #333;
+}
+
+.weekday-labels div {
+  padding: 5px 0;
+}
+
+
+#weekdayLabels {
+  display: none;
+}
+.sidebar-toggle {
+  position: relative;
+}
+
+#toggleSidebar {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1001;
+  background: #fff;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #toggleSidebar {
+    display: block;
+  }
+
+  .sidebar-left {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    background: #ffffffee;
+    z-index: 1000;
+    padding: 10px 0;
+  }
+
+  .sidebar-left.show {
+    display: flex;
+  }
+
+  .icon {
+    margin: 10px 0;
+    font-size: 1.2em;
+  }
+}
+
+
+</style>
+
+</head>
+
+<body>
+  <!-- ✅ Sidebar buttons with matching IDs -->
+  <div class="sidebar-toggle">
+  <button id="toggleSidebar">☰</button>
+  <div class="sidebar-left" id="sidebar">
+    <div class="icon" id="newBtn">📝<span>New</span></div>
+    <div class="icon" id="calendarBtn">📅<span>Calendar</span></div>
+    <div class="icon" id="importantBtn">⭐<span>Important</span></div>
+    <div class="icon" id="dueBtn">🔔<span>Due</span></div>
+  </div>
+</div>
+
+  <div class="main-content">
+    <header>
+      <div class="butterfly">🦋</div>
+      <h1>Homework Organizer</h1>
+
+      <!-- ✅ Date navigation buttons with correct IDs -->
+      <div class="date-nav">
+        <button id="prevDate">&lt;</button>
+        <span id="currentDate">Today</span>
+        <button id="nextDate">&gt;</button>
+        <button id="todayBtn">Today</button>
+      </div>
+    </header>
+
+    <!-- ✅ Homework display area -->
+    <section class="homework-area" id="homeworkArea"></section>
+
+    <!-- ✅ Popup for adding homework -->
+    <div id="popup" class="popup">
+      <h3>Add Homework</h3>
+      <input type="text" id="subInput" placeholder="Subject"><br><br>
+      <input type="text" id="hwInput" placeholder="Homework"><br><br>
+      <label>Appear on:</label><br>
+      <input type="date" id="showInput"><br><br>
+      <label>Due on:</label><br>
+      <input type="date" id="dueInput"><br><br>
+      <input type="number" id="priorityInput" placeholder="Priority (1-5)"><br><br>
+      <button onclick="addHomework()">Add</button>
+      <button onclick="closePopup()">Cancel</button>
+    </div>
+
+    <!-- ✅ Calendar section -->
+    <!-- ✅ Calendar section -->
+<div class="calendar-nav" id="calendarLabel">
+  <button onclick="changeMonth(-1)">⟸</button>
+  <span id="monthLabel">Month Year</span>
+  <button onclick="changeMonth(1)">⟹</button>
+</div>
+<div id="weekdayLabels" class="weekday-labels">
+  <div>S</div>
+  <div>M</div>
+  <div>T</div>
+  <div>W</div>
+  <div>T</div>
+  <div>F</div>
+  <div>S</div>
+</div>
+
+
+<div id="calendarGrid" class="calendar-grid"></div>
+
+
+  <!-- ✅ Paste your JavaScript inside this <script> tag -->
+  <script>
+   window.onload = function () {
+  // Global state
+  let currentDate = new Date();
+  let calendarDate = new Date();
+  let activeView = "today";
+
+  // Utility
+  function formatDate(date) {
+    const d = new Date(date);
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  }
+
+  // View toggling
+  window.toggleView = function(viewName, renderFn) {
+    document.querySelectorAll(".icon").forEach(icon => icon.classList.remove("active"));
+
+    const grid = document.getElementById("calendarGrid");
+    const label = document.getElementById("calendarLabel");
+    const weekdays = document.getElementById("weekdayLabels");
+
+    if (activeView === viewName) {
+      activeView = "today";
+      renderDateNav();
+      renderHomework();
+      window.closePopup();
+      if (grid) grid.style.display = "none";
+      if (label) label.style.display = "none";
+    } else {
+      activeView = viewName;
+      const activeBtn = document.getElementById(viewName + "Btn");
+      if (activeBtn) activeBtn.classList.add("active");
+
+      if (viewName === "calendar") {
+  if (grid) grid.style.display = "grid";
+  if (label) label.style.display = "block";
+  if (weekdays) weekdays.style.display = "grid";
+} else {
+  if (grid) grid.style.display = "none";
+  if (label) label.style.display = "none";
+  if (weekdays) weekdays.style.display = "none";
+}
+
+
+      if (viewName === "new") {
+        window.openPopup();
+      } else {
+        window.closePopup();
+        renderFn();
+      }
+    }
+  };
+
+  // Navigation
+  window.goToToday = function() {
+    currentDate = new Date();
+    renderDateNav();
+    renderHomework();
+  };
+
+  window.changeDate = function(offset) {
+    currentDate.setDate(currentDate.getDate() + offset);
+    renderDateNav();
+    renderHomework();
+  };
+
+  window.changeMonth = function(offset) {
+    calendarDate.setMonth(calendarDate.getMonth() + offset);
+    renderCalendar();
+  };
+
+  // Popup
+  window.openPopup = function() {
+    document.getElementById("popup").style.display = "block";
+  };
+
+  window.closePopup = function() {
+    document.getElementById("popup").style.display = "none";
+  };
+
+  // Homework
+  function renderDateNav() {
+    const todayStr = formatDate(new Date());
+    const currentStr = formatDate(currentDate);
+    document.getElementById("currentDate").textContent = currentStr === todayStr ? "Today" : currentStr;
+  }
+
+  function renderHomework() {
+    const container = document.getElementById("homeworkArea");
+    container.innerHTML = "";
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const todayStr = formatDate(currentDate);
+
+    const filtered = tasks.filter(task =>
+      formatDate(new Date(task.show)) === todayStr
+    );
+
+    filtered.forEach((task, index) => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const box1 = document.createElement("div");
+      const box2 = document.createElement("div");
+
+      const del = document.createElement("span");
+      del.className = "delete";
+      del.textContent = "🗑️";
+      del.onclick = () => {
+        tasks.splice(tasks.indexOf(task), 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        renderHomework();
+      };
+
+      box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
+      box2.className = index % 2 === 0 ? "dirtyfog" : "nelson";
+
+      box1.innerHTML = `<strong>${task.sub}</strong><br>${task.hw}`;
+      box1.appendChild(del);
+      box2.innerHTML = `<strong>Due on:</strong><br>${formatDate(task.due)}`;
+
+      row.appendChild(box1);
+      row.appendChild(box2);
+      container.appendChild(row);
+    });
+  }
+
+  window.addHomework = function () {
+    const sub = document.getElementById("subInput").value.trim();
+    const hw = document.getElementById("hwInput").value.trim();
+    const show = document.getElementById("showInput").value;
+    const due = document.getElementById("dueInput").value;
+    const priority = parseInt(document.getElementById("priorityInput").value);
+
+    if (!sub || !hw || !show || !due || isNaN(priority)) {
+      alert("Please fill in all fields correctly.");
+      return;
+    }
+
+    const newTask = {
+      sub,
+      hw,
+      show: new Date(show).toISOString(),
+      due: new Date(due).toISOString(),
+      priority
+    };
+
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(newTask);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    window.closePopup();
+    renderHomework();
+  };
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const label = document.getElementById("monthLabel");
+  grid.innerHTML = "";
+
+  const month = calendarDate.getMonth();
+  const year = calendarDate.getFullYear();
+  label.textContent = calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // ✅ Calculate how many empty cells to insert before day 1
+  const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const offset = firstDay; // Sunday is the first column
+
+  for (let i = 0; i < offset; i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.innerHTML = "";
+    grid.appendChild(emptyCell);
+  }
+
+  // ✅ Add day cells
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cellDate = new Date(year, month, day);
+    const cellStr = formatDate(cellDate);
+    const hasDue = tasks.some(task =>
+      formatDate(new Date(task.due)) === cellStr
+    );
+
+    const cell = document.createElement("div");
+    cell.innerHTML = `${day} ${hasDue ? "📌" : ""}`;
+    cell.style.background = hasDue ? "#ffd54f" : "#fff";
+    cell.style.cursor = hasDue ? "pointer" : "default";
+    if (hasDue) cell.onclick = () => showDueTasks(cellStr);
+    grid.appendChild(cell);
+  }
+}
+
+
+
+
+  function showDueTasks(dateStr) {
+    const container = document.getElementById("homeworkArea");
+    container.innerHTML = "";
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const filtered = tasks.filter(task =>
+      formatDate(new Date(task.due)) === dateStr
+    );
+
+    filtered.forEach((task, index) => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const box1 = document.createElement("div");
+      const box2 = document.createElement("div");
+
+      const del = document.createElement("span");
+      del.className = "delete";
+      del.textContent = "🗑️";
+      del.onclick = () => {
+        tasks.splice(tasks.indexOf(task), 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        showDueTasks(dateStr);
+      };
+
+      box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
+      box2.className = index % 2 === 0 ? "dirtyfog" : "nelson";
+
+      box1.innerHTML = `<strong>${task.sub}</strong><br>${task.hw}`;
+      box1.appendChild(del);
+      box2.innerHTML = `<strong>Due on:</strong><br>${formatDate(task.due)}`;
+
+      row.appendChild(box1);
+      row.appendChild(box2);
+      container.appendChild(row);
+    });
+
+    document.getElementById("currentDate").textContent = `Due: ${dateStr}`;
+  }
+
+  window.showImportant = function() {
+    const container = document.getElementById("homeworkArea");
+    container.innerHTML = "";
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const importantTasks = tasks.filter(task =>
+      Number(task.priority) >= 1 && Number(task.priority) <= 4
+    );
+
+    importantTasks.forEach((task, index) => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const box1 = document.createElement("div");
+      const box2 = document.createElement("div");
+
+      const del = document.createElement("span");
+      del.className = "delete";
+      del.textContent = "🗑️";
+      del.onclick = () => {
+        tasks.splice(tasks.indexOf(task), 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        window.showImportant();
+      };
+
+      box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
+      box2.className = index % 2 === 0 ? "dirtyfog" : "nelson";
+
+      box1.innerHTML = `<strong>${task.sub}</strong><br>${task.hw}`;
+      box1.appendChild(del);
+      box2.innerHTML = `<strong>Due on:</strong><br>${formatDate(task.due)}`;
+
+            row.appendChild(box1);
+      row.appendChild(box2);
+      container.appendChild(row);
+    });
+
+    document.getElementById("currentDate").textContent = "Important Tasks";
+  };
+
+  window.showDueSoon = function() {
+    const container = document.getElementById("homeworkArea");
+    container.innerHTML = "";
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const today = new Date();
+
+    const dueSoonTasks = tasks.filter(task => {
+      const dueDate = new Date(task.due);
+      const diff = (dueDate - today) / (1000 * 60 * 60 * 24);
+      return diff >= 0 && diff <= 2;
+    });
+
+    dueSoonTasks.forEach((task, index) => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const box1 = document.createElement("div");
+      const box2 = document.createElement("div");
+
+      const del = document.createElement("span");
+      del.className = "delete";
+      del.textContent = "🗑️";
+      del.onclick = () => {
+        tasks.splice(tasks.indexOf(task), 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        window.showDueSoon();
+      };
+
+      box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
+      box2.className = index % 2 === 0 ? "dirtyfog" : "nelson";
+
+      box1.innerHTML = `<strong>${task.sub}</strong><br>${task.hw}`;
+      box1.appendChild(del);
+      box2.innerHTML = `<strong>Due on:</strong><br>${formatDate(task.due)}`;
+
+      row.appendChild(box1);
+      row.appendChild(box2);
+      container.appendChild(row);
+    });
+
+    document.getElementById("currentDate").textContent = "Due Soon";
+  };
+// Attach sidebar button listeners
+document.getElementById("newBtn").addEventListener("click", () =>
+  toggleView("new", openPopup)
+);
+document.getElementById("calendarBtn").addEventListener("click", () =>
+  toggleView("calendar", renderCalendar)
+);
+document.getElementById("importantBtn").addEventListener("click", () =>
+  toggleView("important", showImportant)
+);
+document.getElementById("dueBtn").addEventListener("click", () =>
+  toggleView("due", showDueSoon)
+);
+
+// Attach date navigation listeners
+document.getElementById("prevDate").addEventListener("click", () =>
+  changeDate(-1)
+);
+document.getElementById("nextDate").addEventListener("click", () =>
+  changeDate(1)
+);
+document.getElementById("todayBtn").addEventListener("click", () =>
+  goToToday()
+);
+
+document.getElementById("toggleSidebar").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("show");
+});
+
+  // Initial render
+  renderDateNav();
+  renderHomework();
+};
+</script>
+</body>
+</html>
