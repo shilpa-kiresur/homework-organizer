@@ -6,169 +6,41 @@
 
   <!-- ✅ CSS inside this <style> tag -->
   <style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    background: linear-gradient(to right, #26F596, #0499F2);
-  }
+  /* ✅ Base layout */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #26F596, #0499F2);
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+}
 
-  .sidebar-left {
-    width: 100px;
-    background: #ffffff22;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 20px;
-  }
-
-  .icon {
-    text-align: center;
-    font-size: 1.5em;
-    margin: 20px 0;
-    cursor: pointer;
-  }
-
-  .icon span {
-    display: block;
-    font-size: 0.8em;
-  }
-
-  .main-content {
-    flex: 1;
-    padding: 20px;
-  }
-
-  header {
-    text-align: center;
-  }
-
-  .butterfly {
-    font-size: 2em;
-    color: #388e3c;
-  }
-
-  h1 {
-    color: #4a148c;
-  }
-
-  .date-nav {
-    font-size: 1.5em;
-    margin: 10px 0;
-  }
-
-  .date-nav button {
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 0 5px;
-  }
-
-  .homework-area {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .nelson,
-  .dirtyfog {
-    aspect-ratio: 1 / 1;
-    width: 30%;
-    max-width: 200px;
-    min-width: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0;
-    padding: 10px;
-    color: white;
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
-  }
-
-  .nelson {
-    background: linear-gradient(to right, #f2709c, #ff9472);
-  }
-
-  .dirtyfog {
-    background: linear-gradient(to right, #B993D6, #8CA6DB);
-  }
-
-  .nelson:hover,
-  .dirtyfog:hover {
-    transform: scale(1.05);
-  }
-
-  .delete {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-  }
-
-  .popup {
-    display: none;
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    z-index: 1000;
-  }
-
-  .calendar-nav {
-    text-align: center;
-    margin-top: 40px;
-    display: none;
-  }
-
-  .calendar-grid {
-    display: none;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    padding: 20px;
-  }
-
-  .calendar-grid div {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
-    border-radius: 5px;
-  }
-
-.weekday-labels {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: bold;
-  padding: 10px 20px;
+/* ✅ Sidebar */
+.sidebar-left {
+  width: 120px;
   background: #ffffff33;
-  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  transition: transform 0.3s ease;
 }
 
-.weekday-labels div {
-  padding: 5px 0;
+.icon {
+  text-align: center;
+  font-size: 2em;
+  margin: 20px 0;
+  cursor: pointer;
 }
 
-
-#weekdayLabels {
-  display: none;
+.icon span {
+  display: block;
+  font-size: 1em;
+  margin-top: 5px;
 }
+
+/* ✅ Sidebar toggle button */
 .sidebar-toggle {
   position: relative;
 }
@@ -183,10 +55,154 @@
   border: none;
   font-size: 1.5em;
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
+/* ✅ Main content */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  max-width: 900px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+}
+
+.butterfly {
+  font-size: 3em;
+  color: #388e3c;
+}
+
+h1 {
+  color: #4a148c;
+  font-size: 2em;
+}
+
+.date-nav {
+  font-size: 1.5em;
+  margin: 15px 0;
+}
+
+.date-nav button {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+/* ✅ Homework area */
+.homework-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.nelson,
+.dirtyfog {
+  aspect-ratio: 1 / 1;
+  width: 40%;
+  max-width: 250px;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 15px;
+  color: white;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.nelson {
+  background: linear-gradient(to right, #f2709c, #ff9472);
+}
+
+.dirtyfog {
+  background: linear-gradient(to right, #B993D6, #8CA6DB);
+}
+
+.nelson:hover,
+.dirtyfog:hover {
+  transform: scale(1.05);
+}
+
+.delete {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+/* ✅ Popup */
+.popup {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+/* ✅ Calendar */
+.calendar-nav {
+  text-align: center;
+  margin-top: 40px;
+  display: none;
+}
+
+.calendar-grid {
+  display: none;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  padding: 20px;
+}
+
+.calendar-grid div {
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 6px;
+  background: #ffffffaa;
+}
+
+.weekday-labels {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  background: #ffffff33;
+  color: #333;
+}
+
+.weekday-labels div {
+  padding: 8px 0;
+}
+
+#weekdayLabels {
+  display: none;
+}
+
+/* ✅ Responsive layout */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
@@ -214,7 +230,7 @@
 
   .icon {
     margin: 10px 0;
-    font-size: 1.2em;
+    font-size: 1.8em;
   }
 }
 
