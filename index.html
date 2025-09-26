@@ -10,6 +10,7 @@
   <!-- ✅ CSS inside this <style> tag -->
   <style>
   /* ✅ Base layout */
+/* ✅ Base layout */
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -21,13 +22,17 @@ body {
 
 /* ✅ Sidebar */
 .sidebar-left {
+  display: none;
   width: 120px;
   background: #ffffff33;
-  display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 20px;
   transition: transform 0.3s ease;
+}
+
+.sidebar-left.show {
+  display: flex;
 }
 
 .icon {
@@ -44,13 +49,9 @@ body {
 }
 
 /* ✅ Sidebar toggle button */
-.sidebar-toggle {
-  position: relative;
-}
-
 #toggleSidebar {
-  display: none;
-  position: absolute;
+  display: block;
+  position: fixed;
   top: 10px;
   left: 10px;
   z-index: 1001;
@@ -211,24 +212,18 @@ h1 {
     flex-direction: column;
   }
 
-  #toggleSidebar {
-    display: block;
-  }
-
   .sidebar-left {
-    display: none;
-    flex-direction: column;
+    width: 100%;
     position: absolute;
     top: 50px;
     left: 0;
-    width: 100%;
     background: #ffffffee;
     z-index: 1000;
     padding: 10px 0;
   }
 
-  .sidebar-left.show {
-    display: flex;
+  .main-content {
+    margin-left: 0;
   }
 
   .icon {
@@ -236,7 +231,6 @@ h1 {
     font-size: 1.8em;
   }
 }
-
 
 </style>
 
@@ -309,85 +303,15 @@ h1 {
   <!-- ✅ Paste your JavaScript inside this <script> tag -->
   <script>
    window.onload = function () {
-  // Global state
   let currentDate = new Date();
   let calendarDate = new Date();
   let activeView = "today";
 
-  // Utility
   function formatDate(date) {
     const d = new Date(date);
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   }
 
-  // View toggling
-  window.toggleView = function(viewName, renderFn) {
-    document.querySelectorAll(".icon").forEach(icon => icon.classList.remove("active"));
-
-    const grid = document.getElementById("calendarGrid");
-    const label = document.getElementById("calendarLabel");
-    const weekdays = document.getElementById("weekdayLabels");
-
-    if (activeView === viewName) {
-      activeView = "today";
-      renderDateNav();
-      renderHomework();
-      window.closePopup();
-      if (grid) grid.style.display = "none";
-      if (label) label.style.display = "none";
-    } else {
-      activeView = viewName;
-      const activeBtn = document.getElementById(viewName + "Btn");
-      if (activeBtn) activeBtn.classList.add("active");
-
-      if (viewName === "calendar") {
-  if (grid) grid.style.display = "grid";
-  if (label) label.style.display = "block";
-  if (weekdays) weekdays.style.display = "grid";
-} else {
-  if (grid) grid.style.display = "none";
-  if (label) label.style.display = "none";
-  if (weekdays) weekdays.style.display = "none";
-}
-
-
-      if (viewName === "new") {
-        window.openPopup();
-      } else {
-        window.closePopup();
-        renderFn();
-      }
-    }
-  };
-
-  // Navigation
-  window.goToToday = function() {
-    currentDate = new Date();
-    renderDateNav();
-    renderHomework();
-  };
-
-  window.changeDate = function(offset) {
-    currentDate.setDate(currentDate.getDate() + offset);
-    renderDateNav();
-    renderHomework();
-  };
-
-  window.changeMonth = function(offset) {
-    calendarDate.setMonth(calendarDate.getMonth() + offset);
-    renderCalendar();
-  };
-
-  // Popup
-  window.openPopup = function() {
-    document.getElementById("popup").style.display = "block";
-  };
-
-  window.closePopup = function() {
-    document.getElementById("popup").style.display = "none";
-  };
-
-  // Homework
   function renderDateNav() {
     const todayStr = formatDate(new Date());
     const currentStr = formatDate(currentDate);
@@ -459,47 +383,103 @@ h1 {
     window.closePopup();
     renderHomework();
   };
-function renderCalendar() {
-  const grid = document.getElementById("calendarGrid");
-  const label = document.getElementById("monthLabel");
-  grid.innerHTML = "";
 
-  const month = calendarDate.getMonth();
-  const year = calendarDate.getFullYear();
-  label.textContent = calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+  window.openPopup = function () {
+    document.getElementById("popup").style.display = "block";
+  };
 
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  window.closePopup = function () {
+    document.getElementById("popup").style.display = "none";
+  };
 
-  // ✅ Calculate how many empty cells to insert before day 1
-  const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  const offset = firstDay; // Sunday is the first column
+  window.goToToday = function () {
+    currentDate = new Date();
+    renderDateNav();
+    renderHomework();
+  };
 
-  for (let i = 0; i < offset; i++) {
-    const emptyCell = document.createElement("div");
-    emptyCell.innerHTML = "";
-    grid.appendChild(emptyCell);
+  window.changeDate = function (offset) {
+    currentDate.setDate(currentDate.getDate() + offset);
+    renderDateNav();
+    renderHomework();
+  };
+
+  window.changeMonth = function (offset) {
+    calendarDate.setMonth(calendarDate.getMonth() + offset);
+    renderCalendar();
+  };
+
+  window.toggleView = function (viewName, renderFn) {
+    document.querySelectorAll(".icon").forEach(icon => icon.classList.remove("active"));
+
+    const grid = document.getElementById("calendarGrid");
+    const label = document.getElementById("calendarLabel");
+    const weekdays = document.getElementById("weekdayLabels");
+
+    if (activeView === viewName) {
+      activeView = "today";
+      renderDateNav();
+      renderHomework();
+      window.closePopup();
+      grid.style.display = "none";
+      label.style.display = "none";
+      weekdays.style.display = "none";
+    } else {
+      activeView = viewName;
+      const activeBtn = document.getElementById(viewName + "Btn");
+      if (activeBtn) activeBtn.classList.add("active");
+
+      if (viewName === "calendar") {
+        grid.style.display = "grid";
+        label.style.display = "block";
+        weekdays.style.display = "grid";
+      } else {
+        grid.style.display = "none";
+        label.style.display = "none";
+        weekdays.style.display = "none";
+      }
+
+      if (viewName === "new") {
+        window.openPopup();
+      } else {
+        window.closePopup();
+        renderFn();
+      }
+    }
+  };
+
+  function renderCalendar() {
+    const grid = document.getElementById("calendarGrid");
+    const label = document.getElementById("monthLabel");
+    grid.innerHTML = "";
+
+    const month = calendarDate.getMonth();
+    const year = calendarDate.getFullYear();
+    label.textContent = calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
+
+    for (let i = 0; i < firstDay; i++) {
+      grid.appendChild(document.createElement("div"));
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cellDate = new Date(year, month, day);
+      const cellStr = formatDate(cellDate);
+      const hasDue = tasks.some(task =>
+        formatDate(new Date(task.due)) === cellStr
+      );
+
+      const cell = document.createElement("div");
+      cell.innerHTML = `${day} ${hasDue ? "📌" : ""}`;
+      cell.style.background = hasDue ? "#ffd54f" : "#fff";
+      cell.style.cursor = hasDue ? "pointer" : "default";
+      if (hasDue) cell.onclick = () => showDueTasks(cellStr);
+      grid.appendChild(cell);
+    }
   }
-
-  // ✅ Add day cells
-  for (let day = 1; day <= daysInMonth; day++) {
-    const cellDate = new Date(year, month, day);
-    const cellStr = formatDate(cellDate);
-    const hasDue = tasks.some(task =>
-      formatDate(new Date(task.due)) === cellStr
-    );
-
-    const cell = document.createElement("div");
-    cell.innerHTML = `${day} ${hasDue ? "📌" : ""}`;
-    cell.style.background = hasDue ? "#ffd54f" : "#fff";
-    cell.style.cursor = hasDue ? "pointer" : "default";
-    if (hasDue) cell.onclick = () => showDueTasks(cellStr);
-    grid.appendChild(cell);
-  }
-}
-
-
-
 
   function showDueTasks(dateStr) {
     const container = document.getElementById("homeworkArea");
@@ -540,15 +520,13 @@ function renderCalendar() {
     document.getElementById("currentDate").textContent = `Due: ${dateStr}`;
   }
 
-  window.showImportant = function() {
+  window.showImportant = function () {
     const container = document.getElementById("homeworkArea");
     container.innerHTML = "";
     const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const importantTasks = tasks.filter(task =>
-      Number(task.priority) >= 1 && Number(task.priority) <= 4
-    );
+    const filtered = tasks.filter(task => task.priority >= 1 && task.priority <= 4);
 
-    importantTasks.forEach((task, index) => {
+    filtered.forEach((task, index) => {
       const row = document.createElement("div");
       row.className = "row";
 
@@ -564,14 +542,14 @@ function renderCalendar() {
         window.showImportant();
       };
 
-      box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
+            box1.className = index % 2 === 0 ? "nelson" : "dirtyfog";
       box2.className = index % 2 === 0 ? "dirtyfog" : "nelson";
 
       box1.innerHTML = `<strong>${task.sub}</strong><br>${task.hw}`;
       box1.appendChild(del);
       box2.innerHTML = `<strong>Due on:</strong><br>${formatDate(task.due)}`;
 
-            row.appendChild(box1);
+      row.appendChild(box1);
       row.appendChild(box2);
       container.appendChild(row);
     });
@@ -579,7 +557,7 @@ function renderCalendar() {
     document.getElementById("currentDate").textContent = "Important Tasks";
   };
 
-  window.showDueSoon = function() {
+  window.showDueSoon = function () {
     const container = document.getElementById("homeworkArea");
     container.innerHTML = "";
     const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -621,39 +599,42 @@ function renderCalendar() {
 
     document.getElementById("currentDate").textContent = "Due Soon";
   };
-// Attach sidebar button listeners
-document.getElementById("newBtn").addEventListener("click", () =>
-  toggleView("new", openPopup)
-);
-document.getElementById("calendarBtn").addEventListener("click", () =>
-  toggleView("calendar", renderCalendar)
-);
-document.getElementById("importantBtn").addEventListener("click", () =>
-  toggleView("important", showImportant)
-);
-document.getElementById("dueBtn").addEventListener("click", () =>
-  toggleView("due", showDueSoon)
-);
 
-// Attach date navigation listeners
-document.getElementById("prevDate").addEventListener("click", () =>
-  changeDate(-1)
-);
-document.getElementById("nextDate").addEventListener("click", () =>
-  changeDate(1)
-);
-document.getElementById("todayBtn").addEventListener("click", () =>
-  goToToday()
-);
+  // ✅ Attach sidebar button listeners
+  document.getElementById("newBtn").addEventListener("click", () =>
+    toggleView("new", openPopup)
+  );
+  document.getElementById("calendarBtn").addEventListener("click", () =>
+    toggleView("calendar", renderCalendar)
+  );
+  document.getElementById("importantBtn").addEventListener("click", () =>
+    toggleView("important", showImportant)
+  );
+  document.getElementById("dueBtn").addEventListener("click", () =>
+    toggleView("due", showDueSoon)
+  );
 
-document.getElementById("toggleSidebar").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("show");
-});
+  // ✅ Attach date navigation listeners
+  document.getElementById("prevDate").addEventListener("click", () =>
+    changeDate(-1)
+  );
+  document.getElementById("nextDate").addEventListener("click", () =>
+    changeDate(1)
+  );
+  document.getElementById("todayBtn").addEventListener("click", () =>
+    goToToday()
+  );
 
-  // Initial render
+  // ✅ Sidebar toggle
+  document.getElementById("toggleSidebar").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("show");
+  });
+
+  // ✅ Initial render
   renderDateNav();
   renderHomework();
 };
+
 </script>
 </body>
 </html>
